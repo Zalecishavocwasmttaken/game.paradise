@@ -682,6 +682,18 @@ function closeMenu() {
     document.getElementById('playerFrame').src = '';
     document.getElementById('playerFrame').style.display = 'none';
     document.getElementById('placeholderView').style.display = 'flex';
+    
+    // Reset state variables
+    activeId = null;
+    currentType = 'movie';
+    currentSourceUrl = '';
+    pendingUrl = '';
+    
+    // Reset placeholder to default
+    document.getElementById('placeholderView').innerHTML = `
+        <h2 id="menuTitle">Select a Source</h2>
+        <p style="opacity: 0.5;">Click the folder icon in the sidebar to pick a server.</p>
+    `;
 }
 
 function toggleView(view) {
