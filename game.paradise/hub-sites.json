@@ -1,0 +1,164 @@
+[
+  {
+    "name": "VUSL",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/main/VUSL",
+    "desc": "Main game hub - V17.4"
+  },
+  {
+    "name": "YouTube V19",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/YouTube-V19",
+    "desc": "Playlists, Settings, Private + Public Keys"
+  },
+  {
+    "name": "VUS AI Chat",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/Core-VUS-AI",
+    "desc": "Groq AI - VUS, blocked in many schools"
+  },
+  {
+    "name": "Chat Room",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/VUS-Chat",
+    "desc": "Talk to people who also use VUS Hub"
+  },
+  {
+    "name": "AI Code Editor",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/AI-HTML-Studio",
+    "desc": "Code editor with AI - replace, add, and delete specific lines"
+  },
+  {
+    "name": "Code Editor",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/HTML%20Editor",
+    "desc": "Live HTML code editor with preview"
+  },
+  {
+    "name": "about:blank Opener",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/about%3Ablank-opener",
+    "desc": "Opens files and sites as about:blank - many sites block cloaking"
+  },
+  {
+    "name": "Timer",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/Timer",
+    "desc": "Stopwatch + countdown timer"
+  },
+  {
+    "name": "Local Music Player",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/vus-music-player.html",
+    "desc": "Play your own music files locally"
+  },
+  {
+    "name": "File + Folder Viewer",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/File%20Viewer",
+    "desc": "Browse your local files and folders"
+  },
+  {
+    "name": "Groq API Keys",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/GroqKeys-NeatUI",
+    "desc": "Free Groq API keys for anyone"
+  },
+  {
+    "name": "Notes",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/Notes",
+    "desc": "Keep text saved easily in your browser"
+  },
+  {
+    "name": "Scratch",
+    "url": "https://scratch.mit.edu/",
+    "desc": "Games, music, and animations by the community"
+  },
+  {
+    "name": "Keep VUS AI Alive",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/Keep%20VUS%20AI%20Alive",
+    "desc": "Create and send your key to keep VUS AI alive"
+  },
+  {
+    "name": "Get YouTube Key",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/Tutorials/YT-API-Key/HowTo",
+    "desc": "How to get a YouTube Data API v3 key"
+  },
+  {
+    "name": "Google Doodles",
+    "url": "https://share.google/wN47yxVARg0bCBcDl",
+    "desc": "Minesweeper, Solitaire, Snake and many more Google games"
+  },
+  {
+    "name": "KBH Games",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/KBH-Games.html",
+    "desc": "Not sure if it works, but it has more games"
+  },
+  {
+    "name": "REIDS GAMES",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/REIDS-GAMES",
+    "desc": "A site with games and movies"
+  },
+  {
+    "name": "Greeni",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/Greeni",
+    "desc": "Movies and games"
+  },
+  {
+    "name": "Polaris Hub",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/PolarisHub",
+    "desc": "A large collection of games"
+  },
+  {
+    "name": "Wither Games",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/wither",
+    "desc": "144 popular and interesting games"
+  },
+  {
+    "name": "gn-math",
+    "url": "https://cdn.jsdelivr.net/gh/Zalecishavocdeleted/newtestingstuff@main/gnmathredoscrtlinkencyrpt.svg",
+    "desc": "Well-known game site"
+  },
+  {
+    "name": "Ultimate Game Stash",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/UltimateGameStash",
+    "desc": "One of the biggest stashes"
+  },
+ 
+  {
+    "name": "Noah's Tutoring",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/Noah's-Tutoring",
+    "desc": "A large collection of games"
+  },
+  {
+    "name": "Noah's Tutoring Launcher",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUSL/refs/heads/main/Other/Noah's-Tutoring-Launcher",
+    "desc": "Launcher for Noah's Tutoring"
+  },
+  {
+    "name": "Project Bugs",
+    "url": "https://sites.google.com/view/cool-science-facts/",
+    "desc": "Google site with many games"
+  },
+  {
+    "name": "CalcSolver",
+    "url": "https://calcsolver.net/",
+    "desc": "Disguised game hub"
+  },
+  {
+    "name": "Game 'N Go Games 1",
+    "url": "https://gane-n-go.lovable.app/",
+    "desc": "Game site that looks like a computer"
+  },
+  {
+    "name": "Game 'N Go Games 2",
+    "url": "https://game-n-go-gaming.lovable.app/",
+    "desc": "Mirror 2"
+  },
+  {
+    "name": "BestSpark",
+    "url": "https://theres-a.mcdonalds-in-the-pentagon.com/",
+    "desc": "Collection of game hubs and created games"
+  },
+  {
+    "name": "UnblockedZone!",
+    "url": "https://testingcf.jsdelivr.net/combine/gh/googleaccountuser/myfirstrepo@master/windows10background.svg",
+    "desc": "Site with multiple mirrors"
+  },
+ 
+  {
+    "name": "Ghost Hub Cinema",
+    "url": "https://raw.githubusercontent.com/Cra-Z-Gaming/VUS/refs/heads/main/other/Ghost-Cinema",
+    "desc": "Collection of movies"
+  }
+]
