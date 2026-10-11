@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hub | Game Paradise</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    html, body { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
+    body { min-height: 100vh; }
+    .hub-page { max-width: 1180px; margin: 0 auto; padding: 32px 24px 56px; }
+    .hub-page h1 { margin: 0 0 8px; font-size: 28px; }
+    .hub-intro { margin: 0 0 24px; color: #aaa; }
+    .hub-form {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) minmax(200px, 2fr) minmax(150px, 1fr) auto;
+      gap: 10px;
+      padding: 16px;
+      margin-bottom: 22px;
+      background: var(--surface);
+      border: 1px solid #292929;
+      border-radius: 12px;
+    }
+    .hub-form input {
+      min-width: 0;
+      padding: 10px 12px;
+      color: var(--text);
+      background: #090909;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    .hub-form button, .hub-open {
+      padding: 9px 13px;
+      color: var(--text);
+      background: #202020;
+      border: 1px solid #383838;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .hub-form button, .hub-open { color: #111; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+    .hub-form button:hover, .hub-open:hover { filter: brightness(1.12); }
+    .hub-status { min-height: 20px; margin: 0 0 14px; color: #aaa; font-size: 13px; }
+    .hub-status.error { color: #ff9999; }
+    .hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+    .hub-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 155px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid #292929;
+      border-radius: 12px;
+    }
+    .hub-card h2 { margin: 0 0 7px; font-size: 17px; overflow-wrap: anywhere; }
+    .hub-card p { flex: 1; margin: 0 0 14px; color: #aaa; font-size: 13px; line-height: 1.5; }
+    .hub-card-actions { display: flex; gap: 8px; }
+    .hub-card-actions button { flex: 1; }
+    @media (max-width: 760px) {
+      .hub-form { grid-template-columns: 1fr 1fr; }
+      .hub-form input[type="url"] { grid-column: 1 / -1; }
+      .hub-page { padding: 24px 14px 40px; }
+    }
+    @media (max-width: 480px) {
+      .hub-form { grid-template-columns: 1fr; }
+      .hub-form input[type="url"] { grid-column: auto; }
+      .hub-form button { min-height: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="homepage.html">Home</a>
+      <a href="games.html">Games</a>
+      <a href="hub.html" class="active" aria-current="page">Hub</a>
+      <a href="settings.html">Settings</a>
+      <a href="proxy.html">Duckduckgo</a>
+      <a href="chat.html">Chat</a>
+      <a href="media.html">Media</a>
+      <a href="share.html">Share</a>
+      <a href="credits.html">Credits</a>
+    </nav>
+    <a class="profile-trigger" href="profile.html" aria-label="Profile">
+      <span class="pfp-small" id="userProfilePic"></span>
+    </a>
+  </header>
+
+  <main class="hub-page">
+    <h1>Hub</h1>
+    <p class="hub-intro">Edit <code>hub-sites.json</code> to add or remove the built-in sites. Sites added below are saved only in this browser.</p>
+    <form class="hub-form" id="hubForm">
+      <input id="siteName" name="name" type="text" maxlength="60" placeholder="Site name" aria-label="Site name" required>
+      <input id="siteUrl" name="url" type="text" inputmode="url" placeholder="https://example.com" aria-label="Site URL" required>
+      <input id="siteDescription" name="description" type="text" maxlength="140" placeholder="Description (optional)" aria-label="Description">
+      <button type="submit">Add site</button>
+    </form>
+    <p class="hub-status" id="hubStatus" role="status" aria-live="polite"></p>
+    <section class="hub-grid" id="hubGrid" aria-label="Saved sites"></section>
+  </main>
+
+  <script>
+    const HUBS_URL = "hub-sites.json";
+    const CUSTOM_SITES_KEY = "gameParadiseHubSites";
+    const form = document.getElementById("hubForm");
+    const grid = document.getElementById("hubGrid");
+    const status = document.getElementById("hubStatus");
+    let builtInSites = [];
+
+    function setStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle("error", isError);
+    }
+
+    function readStoredList(key) {
+      try {
+        const stored = JSON.parse(localStorage.getItem(key) || "[]");
+        if (!Array.isArray(stored)) throw new Error("Stored hub list is not an array.");
+        return stored;
+      } catch (error) {
+        console.error("Could not read saved hub sites.", error);
+        setStatus("Could not read your saved sites from this browser.", true);
+        return [];
+      }
+    }
+
+    function siteKey(site) {
+      return site.name + "\n" + site.url;
+    }
+
+    function normalizeUrl(value) {
+      const trimmed = value.trim();
+      const candidate = /^[a-z][a-z\d+.-]*:/i.test(trimmed) ? trimmed : "https://" + trimmed;
+      const parsed = new URL(candidate);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+        throw new Error("Use an http or https address.");
+      }
+      return parsed.href;
+    }
+
+    function renderSites() {
+      const custom = readStoredList(CUSTOM_SITES_KEY);
+      const sites = [...builtInSites, ...custom];
+      grid.replaceChildren();
+
+      if (!sites.length) {
+        const empty = document.createElement("p");
+        empty.className = "hub-status";
+        empty.textContent = "No sites saved. Add one above.";
+        grid.appendChild(empty);
+        return;
+      }
+
+      sites.forEach(site => {
+        const card = document.createElement("article");
+        card.className = "hub-card";
+        const title = document.createElement("h2");
+        title.textContent = site.name;
+        const description = document.createElement("p");
+        description.textContent = site.desc || " ";
+        const actions = document.createElement("div");
+        actions.className = "hub-card-actions";
+        const openButton = document.createElement("button");
+        openButton.type = "button";
+        openButton.className = "hub-open";
+        openButton.textContent = "Open";
+        openButton.addEventListener("click", () => openSite(site.url));
+        actions.append(openButton);
+        card.append(title, description, actions);
+        grid.appendChild(card);
+      });
+    }
+
+    function openSite(url) {
+      let parsed;
+      try {
+        parsed = new URL(normalizeUrl(url));
+      } catch (error) {
+        setStatus("That saved URL is invalid.", true);
+        return;
+      }
+
+      const tab = window.open("about:blank", "_blank");
+      if (!tab) {
+        setStatus("Allow pop-ups to open sites from Hub.", true);
+        return;
+      }
+      tab.opener = null;
+
+      if (!/(^|\.)raw\.githubusercontent\.com$/i.test(parsed.hostname)) {
+        tab.document.title = "Hub";
+        tab.document.documentElement.style.height = "100%";
+        tab.document.body.style.cssText = "height:100%;margin:0;overflow:hidden";
+        const frame = tab.document.createElement("iframe");
+        frame.title = "Opened site";
+        frame.src = parsed.href;
+        frame.style.cssText = "display:block;width:100%;height:100%;border:0";
+        tab.document.body.appendChild(frame);
+        return;
+      }
+
+      fetch(parsed.href)
+        .then(response => {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.text();
+        })
+        .then(html => {
+          const baseUrl = new URL(".", parsed.href).href;
+          tab.document.open();
+          tab.document.write(html.replace(/<head(\s[^>]*)?>/i, match => match + '<base href="' + baseUrl + '">'));
+          tab.document.close();
+        })
+        .catch(error => {
+          console.error("Could not open the selected hub site.", error);
+          tab.close();
+          setStatus("Could not load that site. Check the address and try again.", true);
+        });
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const name = document.getElementById("siteName").value.trim();
+      const urlInput = document.getElementById("siteUrl").value;
+      const desc = document.getElementById("siteDescription").value.trim();
+      if (!name) {
+        setStatus("Enter a site name.", true);
+        return;
+      }
+
+      let url;
+      try {
+        url = normalizeUrl(urlInput);
+      } catch (error) {
+        setStatus(error.message || "Enter a valid http or https address.", true);
+        return;
+      }
+
+      const custom = readStoredList(CUSTOM_SITES_KEY);
+      if ([...builtInSites, ...custom].some(site => site.url === url)) {
+        setStatus("That site is already in Hub.", true);
+        return;
+      }
+      try {
+        custom.push({ name, url, desc, custom: true });
+        localStorage.setItem(CUSTOM_SITES_KEY, JSON.stringify(custom));
+      } catch (error) {
+        console.error("Could not save the new hub site.", error);
+        setStatus("Could not save that site in this browser.", true);
+        return;
+      }
+      form.reset();
+      setStatus("Site added.");
+      renderSites();
+    });
+
+    fetch(HUBS_URL)
+      .then(response => {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) throw new Error("Hub site list must be a JSON array.");
+        builtInSites = data
+          .filter(site => site && site.name && site.url)
+          .map(site => ({ ...site, url: normalizeUrl(site.url), custom: false }));
+        renderSites();
+        setStatus(builtInSites.length + " sites loaded from hub-sites.json.");
+      })
+      .catch(error => {
+        console.error("Could not load Hub sites.", error);
+        setStatus("Could not load hub-sites.json.", true);
+        renderSites();
+      });
+  </script>
+</body>
+</html>
