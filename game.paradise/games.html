@@ -61,9 +61,12 @@ body, html {
       align-items: center;
       justify-content: center;
       gap: 10px;
+      padding: 0 12px;
+      overflow-x: auto;
       z-index: 1002;
     }
     .source-btn {
+      flex: 0 0 auto;
       padding: 8px 20px;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -80,6 +83,18 @@ body, html {
     .source-btn.active {
       background: var(--accent);
       border-color: var(--accent);
+    }
+    .source-btn.featured,
+    .source-btn.featured:hover,
+    .source-btn.featured.active {
+      color: #ffd76a;
+      background: linear-gradient(135deg, #392b08, #171307);
+      border-color: #c99a26;
+      box-shadow: 0 0 10px rgba(255, 198, 55, 0.25);
+    }
+    .source-btn.featured:hover {
+      color: #ffe7a3;
+      border-color: #ffe07a;
     }
 
     /* Top Bar Layout */
@@ -197,7 +212,7 @@ z-index: 1001;
       overflow-y: auto; padding: 30px; box-sizing: border-box; scroll-behavior: smooth;
     }
     
-    /* Iframe container for Web Cloudmoon */
+    /* Iframe container for external game sources */
     .iframe-container {
       display: none;
       position: fixed;
@@ -211,7 +226,86 @@ z-index: 1001;
       width: 100%;
       height: 100%;
       border: none;
+      display: none;
     }
+    .iframe-container iframe.active { display: block; }
+    .featured-launch-panel {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(ellipse at center, #211a08 0, #0b0b0b 70%);
+    }
+    .featured-launch-panel.active { display: flex; }
+    .featured-launch-card {
+      width: min(100%, 480px);
+      padding: 30px;
+      text-align: center;
+      background: #12110d;
+      border: 1px solid #c99a26;
+      border-radius: 14px;
+      box-shadow: 0 0 28px rgba(255, 198, 55, 0.16);
+    }
+    .featured-launch-card h1 { margin: 0 0 10px; color: #ffd76a; }
+    .featured-launch-card p { margin: 0 0 22px; color: #c8c1ad; line-height: 1.5; }
+    .featured-launch-button {
+      padding: 11px 26px;
+      color: #201600;
+      background: linear-gradient(135deg, #ffe8a0, #d5a52e);
+      border: 1px solid #ffe07a;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .featured-launch-button:hover { filter: brightness(1.08); }
+    .featured-notice {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(5px);
+    }
+    .featured-notice.hidden { display: none; }
+    .featured-notice-card {
+      position: relative;
+      width: min(100%, 540px);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid #c99a26;
+      border-radius: 12px;
+    }
+    .featured-notice-card h2 { margin: 0 36px 14px 0; color: #ffd76a; }
+    .featured-notice-card p { margin: 0 0 20px; line-height: 1.6; }
+    .featured-notice-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .featured-notice-actions button {
+      flex: 1 1 210px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1px solid #555;
+      border-radius: 8px;
+      color: var(--text);
+      background: #222;
+      font: inherit;
+      cursor: pointer;
+    }
+    .featured-notice-actions button:disabled { opacity: .55; cursor: not-allowed; }
+    .featured-notice-actions #featuredConfirm:enabled {
+      color: #201600;
+      background: #e4bd55;
+      border-color: #ffe07a;
+      font-weight: 700;
+    }
+    #featuredNoticeStatus { min-height: 20px; margin: 12px 0 0; color: #ff9999; font-size: 13px; }
 
     .letter-section { margin-bottom: 50px; }
     .letter-header {
@@ -280,10 +374,13 @@ z-index: 1001;
     <div class="nav">
       <a href="homepage.html">Home</a>
       <a href="games.html" class="active">Games</a>
+      <a href="hub.html">Hub</a>
       <a href="settings.html">Settings</a>
-      <a href="proxy.html">Proxy</a>
+      <a href="proxy.html">Duckduckgo</a>
       <a href="chat.html">Chat</a>
       <a href="media.html">Media</a>
+      <a href="share.html">Share</a>
+      <a href="credits.html">Credits</a>
     </div>
 
     <div class="recent-container">
@@ -302,19 +399,42 @@ z-index: 1001;
 
   <!-- Source Selector Bar -->
   <div class="source-bar">
-    <button class="source-btn active" onclick="switchSource('ugs')">UGS</button>
-    <button class="source-btn" onclick="switchSource('cloudmoon')">Web Cloudmoon</button>
+    <button class="source-btn featured active" type="button" title="The top game source" onclick="switchSource('featured')">★ Best Source ★</button>
+    <button class="source-btn" type="button" title="Roblox and more apps — by far the best" onclick="switchSource('cloudmoon')">Web Cloudmoon (backup)</button>
+    <button class="source-btn" type="button" title="Quality over quantity game source" onclick="switchSource('gnmath')">gn-math</button>
+    <button class="source-btn" type="button" title="Almost 3k games" onclick="switchSource('ugs')">UGS</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('snokido')">Snokido</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('y8')">Y8</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('gamepix')">GamePix</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('kbhgames')">KBH Games</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('gamaverse')">Gamaverse</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('crazygames')">CrazyGames</button>
+    <button class="source-btn" type="button" title="Additional game source" onclick="switchSource('poki')">Poki</button>
   </div>
 
-  <div class="sidebar" id="sidebar"></div>
+  <div class="sidebar" id="sidebar" style="display:none"></div>
 
-  <div class="main-container" id="mainContainer">
+  <div class="main-container" id="mainContainer" style="display:none">
     <div id="sections-container"></div>
   </div>
 
-  <!-- Iframe for Web Cloudmoon -->
-  <div class="iframe-container" id="iframeContainer">
-    <iframe id="cloudmoonFrame" src=""></iframe>
+  <!-- External game-source iframes -->
+  <div class="iframe-container" id="iframeContainer" style="display:block">
+    <section class="featured-launch-panel active" id="featuredLaunchPanel">
+      <div class="featured-launch-card">
+        <h1>Best Game Source</h1>
+        <p>Review the sign-in notice before opening this external site.</p>
+        <button class="featured-launch-button" type="button" onclick="showFeaturedNotice()">Launch</button>
+      </div>
+    </section>
+    <iframe id="gnmathFrame" title="gn-math" src=""></iframe>
+    <iframe id="snokidoFrame" title="Snokido" src=""></iframe>
+    <iframe id="y8Frame" title="Y8" src=""></iframe>
+    <iframe id="gamepixFrame" title="GamePix" src=""></iframe>
+    <iframe id="kbhgamesFrame" title="KBH Games" src=""></iframe>
+    <iframe id="gamaverseFrame" title="Gamaverse" src=""></iframe>
+    <iframe id="crazygamesFrame" title="CrazyGames" src=""></iframe>
+    <iframe id="pokiFrame" title="Poki" src=""></iframe>
   </div>
 
   <footer class="site-footer">
@@ -334,6 +454,19 @@ z-index: 1001;
     </div>
   </div>
 
+  <div id="featuredNotice" class="featured-notice hidden" role="dialog" aria-modal="true" aria-labelledby="featuredNoticeTitle">
+    <section class="featured-notice-card">
+      <button class="close-btn" type="button" aria-label="Close notice" onclick="closeFeaturedNotice()">&times;</button>
+      <h2 id="featuredNoticeTitle">Before you launch</h2>
+      <p>to login to this site you must use Web Cloudmoon (backup) to do this open web cloudboon backup click sign in log in with google on us east then go back to web cloudmoon and click sign in then click sign in with email & password after that you will be prompted to login select us east server enter in your gmail for example if you login to backup with example@gmail.com enter that into the google/apple email and then put a password you will REMEMBER then sign in (sign is is also a sign up so dw abt that) Enjoy</p>
+      <div class="featured-notice-actions">
+        <button id="featuredConfirm" type="button" disabled onclick="launchFeaturedSite()">I have read this message and understand what to do (5s)</button>
+        <button type="button" onclick="closeFeaturedNotice()">Cancel</button>
+      </div>
+      <p id="featuredNoticeStatus" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
@@ -348,55 +481,178 @@ z-index: 1001;
         databaseURL: "https://gameparadiserawdata-default-rtdb.firebaseio.com",
         appId: "1:6326540558:web:8115f5520f0737b239df5f"
     };
-    const isIncognito = new URLSearchParams(window.location.search).get('incognito') === '1';
-    
-    if (!isIncognito) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const auth = isIncognito ? null : firebase.auth();
-    const db = isIncognito ? null : firebase.firestore();
-    const rtdb = isIncognito ? null : firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const rtdb = firebase.database();
     const STORAGE_KEYS = { history: 'fnf_history', recent: 'fnf_recent', status: 'user_status' };
 
 // Source switcher functionality
+let featuredNoticeTimer = null;
+
+function showFeaturedNotice() {
+  const notice = document.getElementById('featuredNotice');
+  const confirmButton = document.getElementById('featuredConfirm');
+  const status = document.getElementById('featuredNoticeStatus');
+  let remaining = 5;
+
+  if (featuredNoticeTimer) clearInterval(featuredNoticeTimer);
+  status.textContent = '';
+  confirmButton.disabled = true;
+  confirmButton.textContent = `I have read this message and understand what to do (${remaining}s)`;
+  notice.classList.remove('hidden');
+  confirmButton.focus();
+
+  featuredNoticeTimer = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearInterval(featuredNoticeTimer);
+      featuredNoticeTimer = null;
+      confirmButton.disabled = false;
+      confirmButton.textContent = 'I have read this message and understand what to do';
+      return;
+    }
+    confirmButton.textContent = `I have read this message and understand what to do (${remaining}s)`;
+  }, 1000);
+}
+
+function closeFeaturedNotice() {
+  document.getElementById('featuredNotice').classList.add('hidden');
+  if (featuredNoticeTimer) {
+    clearInterval(featuredNoticeTimer);
+    featuredNoticeTimer = null;
+  }
+}
+
+function launchFeaturedSite() {
+  const confirmButton = document.getElementById('featuredConfirm');
+  if (confirmButton.disabled) return;
+
+  const launchTab = window.open('about:blank', '_blank');
+  if (!launchTab) {
+    document.getElementById('featuredNoticeStatus').textContent = 'Allow pop-ups to launch this site in a new tab.';
+    return;
+  }
+
+  try {
+    launchTab.opener = null;
+    launchTab.document.title = 'Best Game Source';
+    launchTab.document.documentElement.style.cssText = 'width:100%;height:100%;margin:0';
+    launchTab.document.body.style.cssText = 'width:100%;height:100%;margin:0;overflow:hidden';
+
+    const frame = launchTab.document.createElement('iframe');
+    frame.title = 'Best Game Source';
+    frame.src = 'https://google-classroom.sriail.workers.dev/';
+    frame.allow = 'fullscreen';
+    frame.style.cssText = 'display:block;width:100%;height:100%;border:0';
+    launchTab.document.body.appendChild(frame);
+    closeFeaturedNotice();
+  } catch (error) {
+    console.error('Could not launch the featured game source.', error);
+    launchTab.close();
+    document.getElementById('featuredNoticeStatus').textContent = 'Could not launch the site. Please try again.';
+  }
+}
+
 function switchSource(source) {
   const ugsContainer = document.getElementById('mainContainer');
   const sidebar = document.getElementById('sidebar');
   const iframeContainer = document.getElementById('iframeContainer');
-  const cloudmoonFrame = document.getElementById('cloudmoonFrame');
   const buttons = document.querySelectorAll('.source-btn');
-  
-  buttons.forEach(btn => btn.classList.remove('active'));
-  
+  buttons.forEach(btn => btn.classList.toggle('active', btn.getAttribute('onclick') === `switchSource('${source}')`));
+
+  if (source === 'featured') {
+    ugsContainer.style.display = 'none';
+    sidebar.style.display = 'none';
+    iframeContainer.style.display = 'block';
+    document.querySelectorAll('.iframe-container iframe').forEach(frame => frame.classList.remove('active'));
+    document.getElementById('featuredLaunchPanel').classList.add('active');
+    return;
+  }
+
+  if (source === 'cloudmoon') {
+    const cloudmoonTab = window.open('about:blank', '_blank');
+    if (!cloudmoonTab) {
+      alert('Allow pop-ups to open Web Cloudmoon in a new tab.');
+      return;
+    }
+
+    try {
+      cloudmoonTab.opener = null;
+      cloudmoonTab.document.title = 'Web Cloudmoon';
+      cloudmoonTab.document.documentElement.style.cssText = 'width:100%;height:100%;margin:0';
+      cloudmoonTab.document.body.style.cssText = 'width:100%;height:100%;margin:0;overflow:hidden';
+
+      const frame = cloudmoonTab.document.createElement('iframe');
+      frame.title = 'Web Cloudmoon';
+      frame.src = 'https://geometry.today/';
+      frame.allow = 'fullscreen';
+      frame.style.cssText = 'display:block;width:100%;height:100%;border:0';
+      cloudmoonTab.document.body.appendChild(frame);
+    } catch (error) {
+      console.error('Could not open Web Cloudmoon.', error);
+      cloudmoonTab.close();
+      alert('Could not open Web Cloudmoon. Please try again.');
+    }
+    return;
+  }
+
   if (source === 'ugs') {
     ugsContainer.style.display = 'block';
     sidebar.style.display = 'flex';
     iframeContainer.style.display = 'none';
-    buttons[0].classList.add('active');
-  } else if (source === 'cloudmoon') {
-    ugsContainer.style.display = 'none';
-    sidebar.style.display = 'none';
-    iframeContainer.style.display = 'block';
-    buttons[1].classList.add('active');
-    
-    // Always set the URL when switching to cloudmoon
-    cloudmoonFrame.src = 'https://astra.pxi-fusion.com/';
+    document.querySelectorAll('.iframe-container iframe').forEach(frame => frame.classList.remove('active'));
+    document.getElementById('featuredLaunchPanel').classList.remove('active');
+    return;
   }
-}
 
-// Preserve incognito mode across page navigation
-if (isIncognito) {
-    document.querySelectorAll('.nav a').forEach(link => {
-        const url = new URL(link.href);
-        url.searchParams.set('incognito', '1');
-        link.href = url.toString();
-    });
-    
-    // Also update profile trigger
-    const profileTrigger = document.querySelector('.profile-trigger');
-    if (profileTrigger) {
-        profileTrigger.onclick = () => location.href = 'profile.html?incognito=1';
+  const sources = {
+    featured: {
+      frame: document.getElementById('featuredFrame'),
+      url: 'https://google-classroom.sriail.workers.dev/'
+    },
+    gnmath: {
+      frame: document.getElementById('gnmathFrame'),
+      url: 'https://cdn.jsdelivr.net/gh/Zalecishavocdeleted/newtestingstuff@main/gnmathredoscrtlinkencyrpt.svg'
+    },
+    snokido: {
+      frame: document.getElementById('snokidoFrame'),
+      url: 'https://www.snokido.com/'
+    },
+    y8: {
+      frame: document.getElementById('y8Frame'),
+      url: 'https://www.y8.com/'
+    },
+    gamepix: {
+      frame: document.getElementById('gamepixFrame'),
+      url: 'https://www.gamepix.com/'
+    },
+    kbhgames: {
+      frame: document.getElementById('kbhgamesFrame'),
+      url: 'https://kbhgames.com/'
+    },
+    gamaverse: {
+      frame: document.getElementById('gamaverseFrame'),
+      url: 'https://gamaverse.com/video-games-game/'
+    },
+    crazygames: {
+      frame: document.getElementById('crazygamesFrame'),
+      url: 'https://www.crazygames.com/'
+    },
+    poki: {
+      frame: document.getElementById('pokiFrame'),
+      url: 'https://poki.com/'
     }
+  };
+  const selectedSource = sources[source];
+  if (!selectedSource) return;
+
+  ugsContainer.style.display = 'none';
+  sidebar.style.display = 'none';
+  iframeContainer.style.display = 'block';
+  document.querySelectorAll('.iframe-container iframe').forEach(frame => frame.classList.toggle('active', frame === selectedSource.frame));
+  document.getElementById('featuredLaunchPanel').classList.remove('active');
+  selectedSource.frame.src = selectedSource.url;
 }
 
 const stashes = {
@@ -2630,14 +2886,6 @@ const stashes = {
     ];
 
     function init() {
-      if (isIncognito) {
-        localStorage.setItem(STORAGE_KEYS.status, 'incognito');
-        renderRecent();
-        applyUpdateLog();
-        generateLibrary();
-        return;
-      }
-      
       auth.onAuthStateChanged(user => {
         if (user) {
           rtdb.ref(`/status/${user.uid}`).set('Browsing Library');
@@ -2648,12 +2896,12 @@ const stashes = {
               document.getElementById('userProfilePic').style.backgroundImage = `url('${doc.data().photoURL}')`;
             }
           });
-          renderRecent();
-          applyUpdateLog();
-          generateLibrary();
         } else {
-          window.location.href = "index.html";
+          localStorage.setItem(STORAGE_KEYS.status, 'guest');
         }
+        renderRecent();
+        applyUpdateLog();
+        generateLibrary();
       });
     }
 
@@ -2717,7 +2965,7 @@ const stashes = {
     }
 
     async function launchGame(fileName, displayName, stashName) {
-      if (!isIncognito && auth.currentUser) {
+      if (auth.currentUser) {
         rtdb.ref(`/status/${auth.currentUser.uid}`).set('Playing: ' + displayName);
         db.collection("users").doc(auth.currentUser.uid).collection("history").add({
           title: displayName, 
@@ -2799,7 +3047,6 @@ const stashes = {
     }
     // --- PASTE START ---
     function loadUserTheme(uid) {
-        if (isIncognito) return;
         db.collection("users").doc(uid).collection("settings").doc("appearance").get().then(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -2875,31 +3122,23 @@ const stashes = {
     // --- Activity Tracker ---
     let lastActivity = Date.now();
     function updateStatus(status) {
-        if (isIncognito || !auth || !auth.currentUser) return;
+        if (!auth.currentUser) return;
         rtdb.ref(`/status/${auth.currentUser.uid}`).onDisconnect().set('offline');
         rtdb.ref(`/status/${auth.currentUser.uid}`).set(status);
     }
 
-    if (!isIncognito) {
-        ['mousedown', 'keydown', 'mousemove', 'touchstart'].forEach(evt => {
-            window.addEventListener(evt, () => {
-                if (Date.now() - lastActivity > 5000) {
-                    lastActivity = Date.now();
-                    updateStatus('active');
-                }
-            });
-        });
-
-        setInterval(() => {
-            if (Date.now() - lastActivity > 3 * 60 * 1000) updateStatus('idle');
-        }, 30000);
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                rtdb.ref(`/status/${user.uid}`).set('Browsing Library');
+    ['mousedown', 'keydown', 'mousemove', 'touchstart'].forEach(evt => {
+        window.addEventListener(evt, () => {
+            if (Date.now() - lastActivity > 5000) {
+                lastActivity = Date.now();
+                updateStatus('active');
             }
         });
-    }
+    });
+
+    setInterval(() => {
+        if (Date.now() - lastActivity > 3 * 60 * 1000) updateStatus('idle');
+    }, 30000);
 
   </script>
 </body>
