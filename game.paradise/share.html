@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Share | Game Paradise</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    html, body { min-height: 100%; }
+    body { min-height: 100vh; overflow-x: hidden; }
+    .share-main { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+    .share-card {
+      padding: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      text-align: center;
+    }
+    .share-card h1 { margin: 0 0 14px; color: var(--accent); }
+    .share-card p { margin: 0 auto 24px; max-width: 580px; color: #aaa; line-height: 1.6; }
+    .share-form-link {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #111;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .share-form-link:hover { filter: brightness(1.12); }
+    @media (max-width: 600px) {
+      .share-main { padding: 28px 14px; }
+      .share-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-bar">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="homepage.html">Home</a>
+      <a href="games.html">Games</a>
+      <a href="hub.html">Hub</a>
+      <a href="settings.html">Settings</a>
+      <a href="proxy.html">Duckduckgo</a>
+      <a href="chat.html">Chat</a>
+      <a href="media.html">Media</a>
+      <a href="share.html" class="active" aria-current="page">Share</a>
+      <a href="credits.html">Credits</a>
+    </nav>
+  </header>
+  <main class="share-main">
+    <section class="share-card">
+      <h1>Share</h1>
+      <p>Share the site with others by giving them this link. Responses will be added when I check, at most a week.</p>
+      <a class="share-form-link" href="https://forms.gle/Mig6rSfaCwMGc3D39" target="_blank" rel="noopener noreferrer">Open the Google Form</a>
+    </section>
+  </main>
+</body>
+</html>
