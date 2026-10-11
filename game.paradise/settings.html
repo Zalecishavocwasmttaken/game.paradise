@@ -119,10 +119,13 @@
     <div class="nav">
       <a href="homepage.html">Home</a>
       <a href="games.html">Games</a>
+      <a href="hub.html">Hub</a>
       <a href="settings.html" class="active">Settings</a>
-      <a href="proxy.html">Proxy</a>
+      <a href="proxy.html">Duckduckgo</a>
       <a href="chat.html">Chat</a>
       <a href="media.html">Media</a>
+      <a href="share.html">Share</a>
+      <a href="credits.html">Credits</a>
     </div>
     <div class="profile-trigger" onclick="location.href='profile.html'">
       <div id="userProfilePic" class="pfp-small"></div>
@@ -153,57 +156,25 @@
     projectId: "gameparadiserawdata",
     appId: "1:6326540558:web:8115f5520f0737b239df5f"
 };
-const isIncognito = new URLSearchParams(window.location.search).get('incognito') === '1';
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-if (!isIncognito) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = isIncognito ? null : firebase.auth();
-const db = isIncognito ? null : firebase.firestore();
-
-// Preserve incognito mode across page navigation
-if (isIncognito) {
-    document.querySelectorAll('.nav a').forEach(link => {
-        const url = new URL(link.href);
-        url.searchParams.set('incognito', '1');
-        link.href = url.toString();
-    });
-    
-    // Also update profile trigger
-    const profileTrigger = document.querySelector('.profile-trigger');
-    if (profileTrigger) {
-        profileTrigger.onclick = () => location.href = 'profile.html?incognito=1';
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    document.getElementById('settingsContent').textContent = 'Account settings are unavailable here.';
+    return;
+  }
+  loadUserTheme(user.uid);
+  db.collection("users").doc(user.uid).get().then(doc => {
+    if(doc.exists && doc.data().photoURL) {
+      document.getElementById('userProfilePic').style.backgroundImage = `url('${doc.data().photoURL}')`;
     }
-}
-
-   if (isIncognito) {
-    // Show incognito message
-    document.querySelector('.settings-wrapper').innerHTML = `
-        <div class="settings-card" style="text-align: center; padding: 60px 30px;">
-            <h1 style="font-size: 48px; margin-bottom: 20px;">⚙️</h1>
-            <h2 style="color: var(--accent); margin-bottom: 15px;">Settings disabled in incognito mode</h2>
-            <p style="color: #888; font-size: 14px;">Sign in to access your account settings and customization options.</p>
-        </div>
-    `;
-} else {
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        loadUserTheme(user.uid);
-        db.collection("users").doc(user.uid).get().then(doc => {
-          if(doc.exists && doc.data().photoURL) {
-            document.getElementById('userProfilePic').style.backgroundImage = `url('${doc.data().photoURL}')`;
-          }
-        });
-
-        switchTab(document.querySelector('.s-tab'), 'Account Info');
-     } else {
-        window.location.href = "index.html";
-      }
-    });
-}
+  });
+  switchTab(document.querySelector('.s-tab'), 'Account Info');
+});
 
    function loadUserTheme(uid) {
-    if (isIncognito) return;
     db.collection("users").doc(uid).collection("settings").doc("appearance").get().then(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -243,10 +214,13 @@ if (isIncognito) {
     }
 
     async function switchTab(el, tabName) {
+      const content = document.getElementById('settingsContent');
+      if (!auth.currentUser && tabName !== 'Extras') {
+        content.textContent = 'Account settings are unavailable here.';
+        return;
+      }
       document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
-      
-      const content = document.getElementById('settingsContent');
       
       if(tabName === 'Account Info') {
         content.innerHTML = `
@@ -262,13 +236,6 @@ if (isIncognito) {
               <h4>Account Email</h4>
               <p>${auth.currentUser ? auth.currentUser.email : 'Loading...'}</p>
             </div>
-          </div>
-          <div class="setting-row">
-            <div class="label-group">
-              <h4>Security & Sessions</h4>
-              <p>Secure your account or sign out of this device.</p>
-            </div>
-            <button class="btn-action" style="color:#ff4b4b; border-color:#422;" onclick="auth.signOut()">Sign Out</button>
           </div>
         `;
       } 
@@ -572,6 +539,7 @@ function openGameRequest() {
     <!-- 🔽 EASY TO EDIT SECTION -->
     <p><strong>Creator:</strong> Alec</p>
     <p><strong>Proxy:</strong> Aldrin (proxy is boredom v2)</p>
+    <p><strong>Additional credit:</strong> Quaix_</p>
     <p><strong>Games:</strong> Ultimate Game Stash</p>
     <p><strong>media:</strong> ambr0sial/nova</p>
     <p><strong>inspriation:</strong> vapor.my and like 10 other gaming sites</p>
