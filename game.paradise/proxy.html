@@ -39,10 +39,13 @@
     <div class="nav">
       <a href="homepage.html">Home</a>
       <a href="games.html">Games</a>
+      <a href="hub.html">Hub</a>
       <a href="settings.html">Settings</a>
-      <a href="proxy.html" class="active">Proxy</a>
+      <a href="proxy.html" class="active">Duckduckgo</a>
       <a href="chat.html">Chat</a>
       <a href="media.html">Media</a>
+      <a href="share.html">Share</a>
+      <a href="credits.html">Credits</a>
     </div>
     <div class="profile-trigger" onclick="location.href='profile.html'" style="cursor:pointer;">
         <div id="userProfilePic" class="pfp-small" style="width:32px; height:32px; border-radius:50%; border:1px solid var(--accent); background-size:cover; background-color:#000;"></div>
@@ -64,31 +67,12 @@ const firebaseConfig = {
     projectId: "gameparadiserawdata",
     appId: "1:6326540558:web:8115f5520f0737b239df5f"
 };
-const isIncognito = new URLSearchParams(window.location.search).get('incognito') === '1';
-
-if (!isIncognito) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = isIncognito ? null : firebase.auth();
-const db = isIncognito ? null : firebase.firestore();
-
-// Preserve incognito mode across page navigation
-if (isIncognito) {
-    document.querySelectorAll('.nav a').forEach(link => {
-        const url = new URL(link.href);
-        url.searchParams.set('incognito', '1');
-        link.href = url.toString();
-    });
-    
-    // Also update profile trigger
-    const profileTrigger = document.querySelector('.profile-trigger');
-    if (profileTrigger) {
-        profileTrigger.onclick = () => location.href = 'profile.html?incognito=1';
-    }
-}
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
    function loadUserTheme(uid) {
-    if (isIncognito) return;
+    if (!auth.currentUser) return;
     db.collection("users").doc(uid).collection("settings").doc("appearance").get().then(doc => {
             if (doc.exists) {
                 const data = doc.data();
@@ -127,22 +111,15 @@ if (isIncognito) {
         });
     }
 
-   if (isIncognito) {
-    // Skip authentication in incognito mode
-} else {
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            loadUserTheme(user.uid);
-            db.collection("users").doc(user.uid).get().then(doc => {
-                if(doc.exists && doc.data().photoURL) {
-                    document.getElementById('userProfilePic').style.backgroundImage = `url('${doc.data().photoURL}')`;
-                }
-            });
-        } else {
-            window.location.href = "index.html";
+   auth.onAuthStateChanged(user => {
+    if (!user) return;
+    loadUserTheme(user.uid);
+    db.collection("users").doc(user.uid).get().then(doc => {
+        if(doc.exists && doc.data().photoURL) {
+            document.getElementById('userProfilePic').style.backgroundImage = `url('${doc.data().photoURL}')`;
         }
     });
-}
+});
   </script>
 </body>
 </html>
