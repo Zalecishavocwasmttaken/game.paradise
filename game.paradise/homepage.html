@@ -155,7 +155,7 @@
   </style>
 </head>
 <body>
-  <div id="loadingScreen">
+  <div id="loadingScreen" class="loader-hidden">
     <div class="loader-content">
       <div class="spinner"></div>
       <div id="loadingMessage">Initializing...</div>
@@ -166,10 +166,12 @@
     <div class="nav">
       <a href="homepage.html" class="active">Home</a>
       <a href="games.html">Games</a>
+      <a href="hub.html">Hub</a>
       <a href="settings.html">Settings</a>
-      <a href="proxy.html">Proxy</a>
+      <a href="proxy.html">Duckduckgo</a>
       <a href="chat.html">Chat</a>
       <a href="media.html">Media</a>
+      <a href="credits.html">Credits</a>
     </div>
     <div class="profile-trigger" onclick="location.href='profile.html'">
         <div id="userProfilePic" class="pfp-small"></div>
@@ -178,10 +180,26 @@
 
   <div class="friends-container">
     <div id="friendsRow" class="friends-row">
-        <div class="friend-card" onclick="openSocialHub()">
-            <div class="hollow-circle add-btn-circle">+</div>
-            <span style="font-size:10px; margin-top:4px; font-weight: bold; color: var(--accent);">SOCIAL</span>
-        </div>
+        <a class="friend-card" href="games.html" style="color:inherit;text-decoration:none;">
+            <div class="hollow-circle add-btn-circle">🎮</div>
+            <span style="font-size:10px;margin-top:4px;font-weight:bold;color:var(--accent);">GAMES</span>
+        </a>
+        <a class="friend-card" href="hub.html" style="color:inherit;text-decoration:none;">
+            <div class="hollow-circle add-btn-circle">↗</div>
+            <span style="font-size:10px;margin-top:4px;font-weight:bold;color:var(--accent);">HUB</span>
+        </a>
+        <a class="friend-card" href="media.html" style="color:inherit;text-decoration:none;">
+            <div class="hollow-circle add-btn-circle">▶</div>
+            <span style="font-size:10px;margin-top:4px;font-weight:bold;color:var(--accent);">MOVIES</span>
+        </a>
+        <a class="friend-card" href="chat.html" style="color:inherit;text-decoration:none;">
+            <div class="hollow-circle add-btn-circle">💬</div>
+            <span style="font-size:10px;margin-top:4px;font-weight:bold;color:var(--accent);">CHAT</span>
+        </a>
+          <a class="friend-card" href="share.html" style="color:inherit;text-decoration:none;">
+              <div class="hollow-circle add-btn-circle">🔗</div>
+              <span style="font-size:10px;margin-top:4px;font-weight:bold;color:var(--accent);">SHARE</span>
+          </a>
     </div>
   </div>
 
@@ -209,38 +227,7 @@
   <script>
     function triggerLoadingScreen() {
         const loader = document.getElementById('loadingScreen');
-        const msgLabel = document.getElementById('loadingMessage');
-        
-        // Track visit count for weighted logic
-        let visitCount = parseInt(localStorage.getItem('site_visit_count') || '0');
-        visitCount++;
-        localStorage.setItem('site_visit_count', visitCount);
-
-        const messageData = [
-            { text: "If you got school work dont be on this please go finish your work", weight: (visitCount <= 3 ? 70 : 15) },
-            { text: "Check settings extra tab ill be accepting game request (DONT ADD ALREADY EXISTING GAMES OR VIRUSES OR NON-HTML GAMES)", weight: 25 },
-            { text: "This is a placeholder for the newest meme i gotta ask my friend for the newest ones", weight: 30 },
-            { text: "What should i add to the site? check settings/extra", weight: 30 }
-        ];
-
-        // Weighted Selection Logic
-        let totalWeight = messageData.reduce((sum, m) => sum + m.weight, 0);
-        let random = Math.random() * totalWeight;
-        let selected = messageData[0].text;
-
-        for (const msg of messageData) {
-            if (random < msg.weight) {
-                selected = msg.text;
-                break;
-            }
-            random -= msg.weight;
-        }
-
-        msgLabel.innerText = selected;
-
-        setTimeout(() => {
-            loader.classList.add('loader-hidden');
-        }, 1000);
+        loader.classList.add('loader-hidden');
     }
     const firebaseConfig = {
         apiKey: "AIzaSyAgsZ68VNL-b5AsWnzll2g_C1Yhw7IowlY",
@@ -254,24 +241,6 @@
     const rtdb = firebase.database();
 
     let selectedId = null;
-
-// 🕶️ Incognito flag
-const isIncognito = new URLSearchParams(window.location.search).has('incognito');
-
-// Preserve incognito mode across page navigation
-if (isIncognito) {
-    document.querySelectorAll('.nav a').forEach(link => {
-        const url = new URL(link.href);
-        url.searchParams.set('incognito', '1');
-        link.href = url.toString();
-    });
-    
-    // Also update profile trigger
-    const profileTrigger = document.querySelector('.profile-trigger');
-    if (profileTrigger) {
-        profileTrigger.onclick = () => location.href = 'profile.html?incognito=1';
-    }
-}
 
     function loadUserTheme(uid) {
         return db.collection("users").doc(uid).collection("settings").doc("appearance").get().then(doc => {
@@ -339,49 +308,25 @@ if (isIncognito) {
 auth.onAuthStateChanged(async user => {
     triggerLoadingScreen();
 
-    // 🕶️ INCOGNITO MODE (no Firebase usage)
-    if (!user && isIncognito) {
-        console.log("Incognito mode active");
-
-        // Neutral profile icon
-        const pfp = document.getElementById('userProfilePic');
-        pfp.style.backgroundImage = 'none';
-        pfp.style.border = '1px dashed var(--border)';
-
-        // Replace friends bar
-        document.getElementById('friendsRow').innerHTML = `
-            <div class="friend-card">
-                <div class="hollow-circle add-btn-circle">👻</div>
-                <span style="font-size:10px; font-weight:bold; opacity:.5;">INCOGNITO</span>
-            </div>
-        `;
-
-        return; // ⛔ DO NOT TOUCH FIREBASE
+    if (!user) {
+        return;
     }
 
-    // 🔐 NORMAL LOGGED-IN USER
-    if (user) {
-        await loadUserTheme(user.uid);
+    await loadUserTheme(user.uid);
 
-        updateStatus('active');
-        const doc = await db.collection("users").doc(user.uid).get();
-        if (doc.exists) {
-            document.getElementById('userProfilePic').style.backgroundImage =
-                `url('${doc.data().photoURL}')`;
-        }
-        loadFriends(user);
-    } else {
-        window.location.href = "index.html";
+    updateStatus('active');
+    const doc = await db.collection("users").doc(user.uid).get();
+    if (doc.exists) {
+        document.getElementById('userProfilePic').style.backgroundImage =
+            `url('${doc.data().photoURL}')`;
     }
+    loadFriends(user);
 });
 
 
     // --- Social Engine ---
    function openSocialHub() { 
-  if (isIncognito) {
-    alert("Social features are disabled in Incognito Mode.");
-    return;
-  }
+  if (!auth.currentUser) return;
   document.getElementById('socialModal').style.display = 'flex'; 
   document.getElementById('tabBar').style.display = 'flex';
   switchTab('search'); 
@@ -586,7 +531,7 @@ auth.onAuthStateChanged(async user => {
     const IDLE_TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
    function updateStatus(status) {
-    if (isIncognito || !auth.currentUser) return;
+    if (!auth.currentUser) return;
     const statusRef = rtdb.ref(`/status/${auth.currentUser.uid}`);
     
     statusRef.onDisconnect().set('offline');
